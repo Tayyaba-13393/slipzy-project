@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slipzy - Sign Up</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/signup.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-white border-bottom py-2">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="home.html" style="color: #163628;">
+        <img src="assets/bunny.png" width="32" height="32" alt="Logo"> Slipzy
+      </a>
+      <div class="ms-auto d-flex gap-4 fs-7 fw-semibold">
+        <a href="home.html" class="text-dark text-decoration-none">Home</a>
+        <a href="home.html#about" class="text-dark text-decoration-none">About</a>
+        <a href="home.html#features" class="text-dark text-decoration-none">Features</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Left side banner -->
+      <div class="col-md-5 left-panel text-center p-4">
+        <img src="assets/bunny.png" width="160" class="mb-3 rounded" alt="Bunny">
+        <h2 class="fw-bold mb-3" style="color: #163628;">join Slipzy</h2>
+        <p class="small text-dark mb-0" style="max-width: 250px;">
+          create a private account and keep every purchase in one place.
+        </p>
+      </div>
+
+      <!-- Right side form -->
+      <div class="col-md-7 right-panel p-4">
+        <div class="auth-card">
+          <h3 class="fw-bold mb-3" style="color: #163628;">create account</h3>
+          <form>
+            <div class="mb-2">
+              <label class="form-label small text-muted mb-1">full name</label>
+              <input type="text" class="form-control form-control-custom" placeholder="John Doe">
+            </div>
+            <div class="mb-2">
+              <label class="form-label small text-muted mb-1">email</label>
+              <input type="email" class="form-control form-control-custom" placeholder="you@example.com">
+            </div>
+            <div class="mb-2">
+              <label class="form-label small text-muted mb-1">password</label>
+              <input type="password" class="form-control form-control-custom" placeholder="••••••••">
+            </div>
+            <div class="mb-3">
+              <label class="form-label small text-muted mb-1">Confirm password</label>
+              <input type="password" class="form-control form-control-custom" placeholder="••••••••">
+            </div>
+            <p class="text-muted small mb-3" style="font-size: 0.75rem;">your records are private. only you can see them.</p>
+            <button type="submit" class="btn btn-dark-green mb-3">sign up</button>
+            <div class="text-center small text-muted">
+              already registered? <a href="login.html" class="fw-bold text-decoration-none" style="color: #163628;">log in</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

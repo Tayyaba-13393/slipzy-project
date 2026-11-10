@@ -1,0 +1,113 @@
+body {
+      background-color: #F7FAF6;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #2D3748;
+    }
+    .hero-bg {
+      background-color: #69C998;
+      border-radius: 0 0 40px 40px;
+      padding: 40px 0 60px 0;
+    }
+    .badge-pill-custom {
+      border: 1.5px solid #163628;
+      border-radius: 20px;
+      padding: 4px 16px;
+      font-size: 0.8rem;
+      color: #163628;
+      display: inline-block;
+    }
+    .btn-dark-green {
+      background-color: #163628;
+      color: white;
+      border-radius: 20px;
+      padding: 8px 24px;
+      font-weight: 600;
+      border: none;
+    }
+    .btn-dark-green:hover { background-color: #0d2319; color: white; }
+    .btn-outline-custom {
+      border: 1.5px solid #163628;
+      border-radius: 20px;
+      padding: 8px 24px;
+      color: #163628;
+      background: white;
+      font-weight: 600;
+    }
+    .receipt-circle-container {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      background-color: #F8BBD0;
+      border-radius: 50%;
+      margin: auto;
+    }
+    .receipt-card {
+      position: absolute;
+      top: 10px;
+      right: -30px;
+      background: white;
+      border: 1.5px solid #163628;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 0.75rem;
+      width: 170px;
+      box-shadow: 2px 2px 0px #163628;
+    }
+    .bunny-hero-img {
+      position: absolute;
+      left: 10px;
+      bottom: 30px;
+      width: 130px;
+    }
+    .about-card {
+      background-color: #F6B8C7;
+      border: 1.5px solid #163628;
+      border-radius: 16px;
+      padding: 24px;
+      height: 100%;
+    }
+    .pill-info {
+      border: 1.5px solid #163628;
+      border-radius: 20px;
+      padding: 10px 20px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+    }
+    .pill-green { background-color: #69C998; color: #163628; }
+    .pill-white { background-color: white; color: #163628; }
+    .pill-yellow { background-color: #FEF3D6; color: #163628; }
+    
+    .feature-card {
+      background: white;
+      border: 1.5px solid #163628;
+      border-radius: 16px;
+      padding: 20px;
+      height: 100%;
+    }
+    .icon-box {
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      border: 1.5px solid #163628;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+    }
+    .box-green { background-color: #69C998; }
+    .box-pink { background-color: #F6B8C7; }
+    
+    .cta-banner {
+      background-color: #69C998;
+      border: 1.5px solid #163628;
+      border-radius: 20px;
+      padding: 24px 32px;
+    }
+    .footer-bar {
+      background-color: #163628;
+      color: white;
+      padding: 12px 0;
+      font-size: 0.8rem;
+    }

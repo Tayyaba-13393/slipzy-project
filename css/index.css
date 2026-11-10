@@ -1,0 +1,19 @@
+  body {
+      background-color: #69C998;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin: 0 4px;
+    }
+    .dot-dark { background-color: #1A3B2B; }
+    .dot-pink { background-color: #F6B8C7; }
+    .dot-grey { background-color: #A0C8B2; }
+    .img-box {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+    }
