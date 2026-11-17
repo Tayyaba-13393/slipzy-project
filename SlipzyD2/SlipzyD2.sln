@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36109.1 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlipzyD2", "SlipzyD2.csproj", "{C930E891-46C7-06CC-4AA1-FBEA29EC98C5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C930E891-46C7-06CC-4AA1-FBEA29EC98C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C930E891-46C7-06CC-4AA1-FBEA29EC98C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C930E891-46C7-06CC-4AA1-FBEA29EC98C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C930E891-46C7-06CC-4AA1-FBEA29EC98C5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7456C17A-8A7C-4243-845C-EF72279F252D}
+	EndGlobalSection
+EndGlobal

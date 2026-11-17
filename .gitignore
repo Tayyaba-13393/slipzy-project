@@ -1,0 +1,15 @@
+# Visual Studio
+.vs/
+
+# Build files
+bin/
+obj/
+
+# User settings
+*.user
+*.suo
+
+# Operating system
+Thumbs.db
+Desktop.ini
+.DS_Store
