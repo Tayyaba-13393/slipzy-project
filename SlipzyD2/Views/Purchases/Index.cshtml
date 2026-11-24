@@ -1,0 +1,223 @@
+﻿@model SlipzyD2.ViewModels.PurchaseListViewModel
+
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "My Purchases";
+}
+
+<div class="page-title">
+
+    <div>
+        <h1>my purchases</h1>
+        <p>view, edit or delete your saved purchases.</p>
+    </div>
+
+    <a asp-action="Create" class="green-button">
+        + add purchase
+    </a>
+
+</div>
+
+<section class="content-card">
+
+    <form method="get" asp-action="Index" class="filter-form">
+
+        <input type="text"
+               name="search"
+               value="@Model.Search"
+               placeholder="search store or product" />
+
+        <select name="categoryId">
+
+            <option value="">all categories</option>
+
+            @foreach (var c in Model.Categories)
+            {
+                if (Model.CategoryId == c.CategoryId)
+                {
+                    <option value="@c.CategoryId" selected>
+                        @c.CategoryName
+                    </option>
+                }
+                else
+                {
+                    <option value="@c.CategoryId">
+                        @c.CategoryName
+                    </option>
+                }
+            }
+
+        </select>
+
+        <input type="date"
+               name="fromDate"
+               value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+
+        <input type="date"
+               name="toDate"
+               value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+
+        <button type="submit" class="pink-button">
+            apply
+        </button>
+
+    </form>
+
+    <div class="table-responsive">
+
+        <table class="purchase-table">
+
+            <thead>
+                <tr>
+                    <th>date</th>
+                    <th>store</th>
+                    <th>product</th>
+                    <th>category</th>
+                    <th>total</th>
+                    <th>actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @if (!Model.Purchases.Any())
+                {
+                    <tr>
+                        <td colspan="6">No purchases found.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var p in Model.Purchases)
+                    {
+                        <tr>
+
+                            <td>
+                                @p.PurchaseDate.ToString("dd MMM yyyy")
+                            </td>
+
+                            <td>@p.StoreName</td>
+
+                            <td>@p.ProductNames</td>
+
+                            <td>
+                                <span class="category-pill">
+                                    @p.CategoryName
+                                </span>
+                            </td>
+
+                            <td class="amount">
+                                Rs. @p.TotalAmount.ToString("N0")
+                            </td>
+
+                            <td class="actions">
+
+                                <a asp-action="Details"
+                                   asp-route-id="@p.PurchaseId">
+                                    view
+                                </a>
+
+                                <a asp-action="Edit"
+                                   asp-route-id="@p.PurchaseId">
+                                    edit
+                                </a>
+
+                                <button type="button"
+                                        class="delete-link"
+                                        data-id="@p.PurchaseId">
+                                    delete
+                                </button>
+
+                            </td>
+
+                        </tr>
+                    }
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="pagination-row">
+
+        <span>
+            showing @Model.Purchases.Count of @Model.TotalCount purchases
+        </span>
+
+        <div>
+
+            @if (Model.Page > 1)
+            {
+                <a asp-action="Index"
+                   asp-route-page="@(Model.Page - 1)"
+                   asp-route-search="@Model.Search"
+                   asp-route-categoryId="@Model.CategoryId"
+                   asp-route-fromDate="@Model.FromDate?.ToString("yyyy-MM-dd")"
+                   asp-route-toDate="@Model.ToDate?.ToString("yyyy-MM-dd")">
+                    previous
+                </a>
+            }
+
+            <span>
+                Page @Model.Page of @Math.Max(1, Model.TotalPages)
+            </span>
+
+            @if (Model.Page < Model.TotalPages)
+            {
+                <a asp-action="Index"
+                   asp-route-page="@(Model.Page + 1)"
+                   asp-route-search="@Model.Search"
+                   asp-route-categoryId="@Model.CategoryId"
+                   asp-route-fromDate="@Model.FromDate?.ToString("yyyy-MM-dd")"
+                   asp-route-toDate="@Model.ToDate?.ToString("yyyy-MM-dd")">
+                    next
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+</section>
+
+<form id="deleteTokenForm">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+
+        $(function () {
+
+            $(".delete-link").on("click", function () {
+
+                const id = $(this).data("id");
+
+                if (!confirm("Are you sure you want to delete this purchase?"))
+                    return;
+
+                const token = $("#deleteTokenForm input[name='__RequestVerificationToken']").val();
+
+                $.ajax({
+                    url: '@Url.Action("Delete", "Purchases")',
+                    method: "POST",
+                    data: {
+                        id: id,
+                        __RequestVerificationToken: token
+                    }
+                })
+                .done(function () {
+                    window.location.reload();
+                })
+                .fail(function () {
+                    alert("Could not delete purchase.");
+                });
+
+            });
+
+        });
+
+    </script>
+}

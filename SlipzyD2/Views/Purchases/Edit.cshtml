@@ -1,0 +1,106 @@
+﻿@model SlipzyD2.Models.Purchase
+
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Edit Purchase";
+
+    var categories = ViewBag.Categories as IEnumerable<SlipzyD2.Models.Category>
+                     ?? Enumerable.Empty<SlipzyD2.Models.Category>();
+}
+
+<div class="page-title">
+    <div>
+        <h1>edit purchase</h1>
+        <p>update your saved purchase information.</p>
+    </div>
+
+    <a asp-action="Index" class="outline-button">cancel</a>
+</div>
+
+<section class="content-card">
+
+    <form asp-action="Edit" method="post">
+
+        @Html.AntiForgeryToken()
+
+        <input asp-for="PurchaseId" type="hidden" />
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="form-three">
+
+            <div>
+                <label asp-for="StoreName">store name</label>
+                <input asp-for="StoreName" required />
+            </div>
+
+            <div>
+                <label asp-for="PurchaseDate">purchase date</label>
+                <input asp-for="PurchaseDate" type="date" required />
+            </div>
+
+            <div>
+                <label asp-for="CategoryId">category</label>
+                <select asp-for="CategoryId">
+                    @foreach (var c in categories)
+                    {
+                        <option value="@c.CategoryId">@c.CategoryName</option>
+                    }
+                </select>
+            </div>
+
+            <div>
+                <label asp-for="TotalAmount">total amount</label>
+                <input asp-for="TotalAmount" type="number"
+                       min="0" step="0.01" required />
+            </div>
+
+            <div>
+                <label asp-for="WarrantyStart">warranty start</label>
+                <input asp-for="WarrantyStart" type="date" />
+            </div>
+
+            <div>
+                <label asp-for="WarrantyMonths">warranty duration</label>
+                <input asp-for="WarrantyMonths" type="number"
+                       min="0" max="1200" />
+            </div>
+
+            <div>
+                <label asp-for="ReturnDeadline">return deadline</label>
+                <input asp-for="ReturnDeadline" type="date" />
+            </div>
+
+        </div>
+
+        <button type="submit" class="green-button mt-4">
+            save changes
+        </button>
+
+    </form>
+
+    <hr />
+
+    <h2>saved products</h2>
+
+    @foreach (var item in Model.Items)
+    {
+        <div class="purchase-row">
+            <span>@item.ProductName</span>
+            <span>@item.Quantity × Rs. @item.UnitPrice.ToString("N2")</span>
+            <strong>Rs. @item.LineTotal.ToString("N2")</strong>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ReceiptPath))
+    {
+        <div class="mt-4">
+            <h2>receipt picture</h2>
+
+            <a href="@Model.ReceiptPath" target="_blank" rel="noopener">
+                view receipt
+            </a>
+        </div>
+    }
+
+</section>

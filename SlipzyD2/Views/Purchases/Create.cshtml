@@ -1,0 +1,424 @@
+﻿@model SlipzyD2.ViewModels.CreatePurchaseViewModel
+
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Add Purchase";
+
+    var categories = ViewBag.Categories as IEnumerable<SlipzyD2.Models.Category>
+                     ?? Enumerable.Empty<SlipzyD2.Models.Category>();
+}
+
+<div class="page-title">
+
+    <div>
+        <h1>add purchase</h1>
+        <p>save a purchase, its warranty and its return deadline.</p>
+    </div>
+
+    <a asp-action="Index" class="outline-button">cancel</a>
+
+</div>
+
+<form asp-action="Create"
+      method="post"
+      enctype="multipart/form-data"
+      id="purchaseForm">
+
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="create-grid">
+
+        <div>
+
+            <section class="content-card">
+
+                <h2>purchase details</h2>
+
+                <div class="form-three">
+
+                    <div>
+                        <label asp-for="StoreName">store name</label>
+                        <input asp-for="StoreName" required />
+                        <span asp-validation-for="StoreName" class="text-danger"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="PurchaseDate">purchase date</label>
+                        <input asp-for="PurchaseDate" type="date" required />
+                    </div>
+
+                    <div>
+                        <label asp-for="CategoryId">category</label>
+
+                        <select asp-for="CategoryId" required>
+                            <option value="">select category</option>
+
+                            @foreach (var c in categories)
+                            {
+                                <option value="@c.CategoryId">
+                                    @c.CategoryName
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                </div>
+
+                <h2 class="section-heading">products</h2>
+
+                <div class="product-heading">
+                    <span>product name</span>
+                    <span>quantity</span>
+                    <span>price</span>
+                    <span></span>
+                </div>
+
+                <div id="itemsContainer">
+
+                    <div class="product-input-row">
+
+                        <input name="Items[0].ProductName"
+                               placeholder="product name"
+                               required />
+
+                        <input name="Items[0].Quantity"
+                               type="number"
+                               min="1"
+                               value="1"
+                               required />
+
+                        <input name="Items[0].UnitPrice"
+                               type="number"
+                               min="0.01"
+                               step="0.01"
+                               placeholder="0.00"
+                               required />
+
+                        <button type="button"
+                                class="remove-product">
+                            ×
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <button type="button"
+                        id="addProduct"
+                        class="outline-button add-product">
+                    + add another product
+                </button>
+
+                <div class="total-line">
+                    total amount:
+                    <strong id="totalAmount">Rs. 0.00</strong>
+                </div>
+
+            </section>
+
+            <section class="content-card warranty-form">
+
+                <h2>warranty and return</h2>
+
+                <div class="form-four">
+
+                    <div>
+                        <label asp-for="WarrantyStart">warranty start</label>
+                        <input asp-for="WarrantyStart" type="date" />
+                    </div>
+
+                    <div>
+                        <label asp-for="WarrantyMonths">
+                            duration (months)
+                        </label>
+                        <input asp-for="WarrantyMonths"
+                               type="number"
+                               min="0"
+                               max="1200" />
+                    </div>
+
+                    <div>
+                        <label>expiry date (automatic)</label>
+                        <input id="WarrantyExpiryPreview" type="date" readonly />
+                    </div>
+
+                    <div>
+                        <label asp-for="ReturnDeadline">return deadline</label>
+                        <input asp-for="ReturnDeadline" type="date" />
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+        <aside>
+
+            <section class="content-card receipt-card">
+
+                <h2>receipt picture</h2>
+
+                <div id="receiptPreview" class="receipt-placeholder">
+
+                    <i class="bi bi-receipt-cutoff"></i>
+
+                    <span>your receipt preview</span>
+
+                </div>
+
+                <label for="Receipt" class="pink-button upload-label">
+                    upload receipt
+                </label>
+
+                <input asp-for="Receipt"
+                       id="Receipt"
+                       type="file"
+                       accept=".jpg,.jpeg,.png,.webp"
+                       hidden />
+
+                <small>JPG, PNG or WEBP · maximum 5 MB</small>
+
+            </section>
+
+            <section class="save-reminder">
+
+                <img src="~/assets/bunny.png" alt="" />
+
+                <p>
+                    Add the warranty dates and I will remind you in time!
+                </p>
+
+            </section>
+
+            <button type="submit"
+                    id="saveButton"
+                    class="green-button save-button">
+                save purchase
+            </button>
+
+        </aside>
+
+    </div>
+
+</form>
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        $(function () {
+
+            let index = 1;
+
+            function renumber() {
+
+                $("#itemsContainer .product-input-row").each(function (i) {
+
+                    $(this).find("input").eq(0).attr(
+                        "name", `Items[${i}].ProductName`
+                    );
+
+                    $(this).find("input").eq(1).attr(
+                        "name", `Items[${i}].Quantity`
+                    );
+
+                    $(this).find("input").eq(2).attr(
+                        "name", `Items[${i}].UnitPrice`
+                    );
+
+                });
+
+                index = $("#itemsContainer .product-input-row").length;
+            }
+
+            function calculateTotal() {
+
+                let total = 0;
+
+                $("#itemsContainer .product-input-row").each(function () {
+
+                    const quantity = Number($(this).find("input").eq(1).val()) || 0;
+
+                    const price = Number($(this).find("input").eq(2).val()) || 0;
+
+                    total += quantity * price;
+
+                });
+
+                $("#totalAmount").text(
+                    "Rs. " + total.toLocaleString("en-PK", {
+                        minimumFractionDigits: 2
+                    })
+                );
+
+            }
+
+            $("#addProduct").on("click", function () {
+
+                const html = `
+                    <div class="product-input-row">
+
+                        <input name="Items[${index}].ProductName"
+                               placeholder="product name" required />
+
+                        <input name="Items[${index}].Quantity"
+                               type="number" min="1" value="1" required />
+
+                        <input name="Items[${index}].UnitPrice"
+                               type="number" min="0.01" step="0.01"
+                               placeholder="0.00" required />
+
+                        <button type="button"
+                                class="remove-product">×</button>
+
+                    </div>`;
+
+                $("#itemsContainer").append(html);
+
+                index++;
+
+            });
+
+            $("#itemsContainer").on("click", ".remove-product", function () {
+
+                if ($("#itemsContainer .product-input-row").length > 1) {
+
+                    $(this).closest(".product-input-row").remove();
+
+                    renumber();
+
+                    calculateTotal();
+
+                }
+
+            });
+
+            $("#itemsContainer").on("input", "input", calculateTotal);
+
+            function updateExpiry() {
+
+                const start = $("#WarrantyStart").val();
+
+                const months = Number($("#WarrantyMonths").val());
+
+                if (!start || !months) {
+                    $("#WarrantyExpiryPreview").val("");
+                    return;
+                }
+
+                const date = new Date(start + "T12:00:00");
+
+                const originalDay = date.getDate();
+
+                date.setDate(1);
+
+                date.setMonth(date.getMonth() + months);
+
+                const lastDay = new Date(
+                    date.getFullYear(),
+                    date.getMonth() + 1,
+                    0
+                ).getDate();
+
+                date.setDate(Math.min(originalDay, lastDay));
+
+                $("#WarrantyExpiryPreview").val(
+                    date.getFullYear() + "-" +
+                    String(date.getMonth() + 1).padStart(2, "0") + "-" +
+                    String(date.getDate()).padStart(2, "0")
+                );
+
+            }
+
+            $("#WarrantyStart, #WarrantyMonths").on(
+                "change input", updateExpiry
+            );
+
+            $("#Receipt").on("change", function () {
+
+                const file = this.files[0];
+
+                if (!file) return;
+
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("Receipt must be 5 MB or smaller.");
+                    this.value = "";
+                    return;
+                }
+
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+
+                    const img = $("<img>", {
+                        src: e.target.result,
+                        alt: "Receipt preview"
+                    });
+
+                    $("#receiptPreview").empty().append(img);
+
+                };
+
+                reader.readAsDataURL(file);
+
+            });
+
+            // $.ajax: submit purchase and receipt.
+            $("#purchaseForm").on("submit", function (e) {
+
+                e.preventDefault();
+
+                const form = this;
+
+                if (!form.reportValidity()) return;
+
+                $("#saveButton").prop("disabled", true).text("saving...");
+
+                $.ajax({
+
+                    url: form.action,
+
+                    method: "POST",
+
+                    data: new FormData(form),
+
+                    processData: false,
+
+                    contentType: false
+
+                })
+
+                .done(function (response, status, xhr) {
+
+                    window.location.href =
+                        xhr.responseURL ||
+                        '@Url.Action("Index", "Purchases")';
+
+                })
+
+                .fail(function (xhr) {
+
+                    $("#saveButton").prop("disabled", false).text("save purchase");
+
+                    alert(
+                        xhr.responseJSON?.message ||
+                        "Could not save purchase. Please check your information."
+                    );
+
+                });
+
+            });
+
+            calculateTotal();
+
+            updateExpiry();
+
+        });
+
+    </script>
+}

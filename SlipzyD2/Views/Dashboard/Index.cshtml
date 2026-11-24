@@ -1,0 +1,281 @@
+﻿@model SlipzyD2.Models.DashboardData
+
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="welcome-banner">
+
+    <img src="~/assets/bunny.png" alt="Slipzy bunny" />
+
+    <div class="welcome-text">
+        <h1>welcome back, @ViewBag.FullName!</h1>
+        <p>You have @Model.UpcomingDeadlines upcoming deadlines. Nothing important will be missed.</p>
+    </div>
+
+    <div class="welcome-actions">
+
+        <a asp-controller="Purchases"
+           asp-action="Create"
+           class="green-button">
+            + add purchase
+        </a>
+
+        <button type="button"
+                class="pink-button"
+                onclick="window.print()">
+            download pdf report
+        </button>
+
+    </div>
+
+</div>
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <span>number of purchases</span>
+        <strong>@Model.TotalPurchases</strong>
+    </div>
+
+    <div class="stat-card">
+        <span>total spending</span>
+        <strong>Rs. @Model.TotalSpent.ToString("N0")</strong>
+    </div>
+
+    <div class="stat-card yellow-card">
+        <span>this month</span>
+        <strong>Rs. @Model.MonthlySpent.ToString("N0")</strong>
+    </div>
+
+    <div class="stat-card pink-card">
+        <span>upcoming deadlines</span>
+        <strong>@Model.UpcomingDeadlines</strong>
+    </div>
+
+</div>
+
+<div class="dashboard-grid">
+
+    <section class="content-card purchases-card">
+
+        <h2>my purchases</h2>
+
+        <div class="dashboard-search">
+            <input type="text"
+                   id="dashboardSearch"
+                   placeholder="search store or product" />
+
+            <a asp-controller="Purchases"
+               asp-action="Index"
+               class="outline-button">
+                view all
+            </a>
+        </div>
+
+        <div id="recentPurchases">
+
+            @if (!Model.RecentPurchases.Any())
+            {
+                <p>No purchases saved yet.</p>
+            }
+            else
+            {
+                @foreach (var p in Model.RecentPurchases)
+                {
+                    <div class="purchase-row">
+
+                        <span>@p.PurchaseDate.ToString("dd MMM")</span>
+
+                        <span>@p.StoreName</span>
+
+                        <span>@p.ProductNames</span>
+
+                        <span class="category-pill">
+                            @p.CategoryName
+                        </span>
+
+                        <strong>Rs. @p.TotalAmount.ToString("N0")</strong>
+
+                        <a asp-controller="Purchases"
+                           asp-action="Edit"
+                           asp-route-id="@p.PurchaseId">
+                            view / edit
+                        </a>
+
+                    </div>
+                }
+            }
+
+        </div>
+
+        <h2 class="section-subheading">warranties</h2>
+
+        @foreach (var p in Model.WarrantyPurchases)
+        {
+            <div class="purchase-row">
+
+                <strong>@p.StoreName</strong>
+
+                <span>
+                    @if (p.WarrantyExpiry.HasValue)
+                    {
+                        <text>ends @p.WarrantyExpiry.Value.ToString("dd MMM yyyy")</text>
+                    }
+                    else if (p.ReturnDeadline.HasValue)
+                    {
+                        <text>return by @p.ReturnDeadline.Value.ToString("dd MMM yyyy")</text>
+                    }
+            </span>
+
+            <span class="deadline-pill">
+                @(p.WarrantyExpiry.HasValue &&
+                                p.WarrantyExpiry.Value.Date < DateTime.Today
+                                ? "expired"
+                                : "active")
+            </span>
+
+            </div>
+                }
+
+    </section>
+
+    <div class="right-column">
+
+        <section class="content-card">
+
+            <h2>reminders</h2>
+
+            @if (!Model.WarrantyPurchases.Any())
+            {
+                <p>No upcoming reminders.</p>
+            }
+
+            @foreach (var p in Model.WarrantyPurchases)
+            {
+                var deadline = p.ReturnDeadline ?? p.WarrantyExpiry;
+
+                if (deadline.HasValue)
+                {
+                    var days = (deadline.Value.Date - DateTime.Today).Days;
+
+                    <div class="reminder-row">
+
+                        <span>@p.StoreName</span>
+
+                        <span class="deadline-pill">
+                            @if (days < 0)
+                            {
+                                <text>expired</text>
+                            }
+                            else
+                            {
+                                <text>@days days left</text>
+                            }
+                        </span>
+
+                    </div>
+                }
+            }
+
+        </section>
+
+        <section class="content-card">
+
+            <h2>spending by category</h2>
+
+            @if (!Model.CategorySpending.Any())
+            {
+                <p>No spending data yet.</p>
+            }
+            else
+            {
+                @foreach (var category in Model.CategorySpending)
+                {
+                    var percentage = Model.TotalSpent > 0
+                    ? (category.Amount / Model.TotalSpent) * 100
+                    : 0;
+
+                    <div class="category-row">
+
+                        <span>@category.CategoryName</span>
+
+                        <div class="category-track">
+                            <div class="category-fill"
+                                 style="width:@percentage%"></div>
+                        </div>
+
+                        <strong>@percentage.ToString("N0")%</strong>
+
+                    </div>
+                }
+            }
+
+        </section>
+
+        <section class="content-card">
+
+            <h2>receipt picture</h2>
+
+            <div class="receipt-placeholder">
+
+                @if (!string.IsNullOrEmpty(Model.LatestReceiptPath))
+                {
+                    <img src="@Model.LatestReceiptPath"
+                         alt="Latest receipt" />
+                }
+                else
+                {
+                    <i class="bi bi-receipt"></i>
+                    <p>Your receipt will appear here.</p>
+                }
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+
+            // Search recent purchases without reloading the page.
+            $("#dashboardSearch").on("input", function () {
+
+                $.get('@Url.Action("Search", "Purchases")',
+                    { term: this.value },
+                    function (rows) {
+
+                        let html = "";
+
+                        rows.forEach(function (p) {
+
+                            const safeStore = $("<div>").text(p.storeName).html();
+                            const safeProduct = $("<div>").text(p.productNames || "").html();
+
+                            html += `
+                                <div class="purchase-row">
+                                    <span>${p.purchaseDate}</span>
+                                    <span>${safeStore}</span>
+                                    <span>${safeProduct}</span>
+                                    <span>${p.categoryName}</span>
+                                    <strong>Rs. ${Number(p.totalAmount).toLocaleString("en-PK")}</strong>
+                                </div>
+                            `;
+                        });
+
+                        $("#recentPurchases").html(
+                            html || "<p>No matching purchases.</p>"
+                        );
+                    }
+                );
+
+            });
+
+        });
+    </script>
+}
